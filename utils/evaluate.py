@@ -55,5 +55,5 @@ def evaluate(model, compute_loss, test_loader, device, save_dir=None):
                                         os.path.join(save_dir, "roc_curve.png"))
     
     print(print_s.format(batch_idx, total_steps) +
-          "Loss: {:.4f}]\tAcc: {:4.2f}\tAUC:{:.3f}".format(loss, acc*100, auc))
+          "Loss: {:.4f}\tAcc: {:4.2f}\tAUC:{:.3f}".format(loss, acc*100, auc))
     return loss, acc 
