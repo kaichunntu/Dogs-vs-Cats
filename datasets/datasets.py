@@ -43,7 +43,36 @@ def create_dataloader(data_path, da_hyp, num_workers=0):
     print("Finish creating dataloader\n")
     return train_loader, valid_loader
 
+def create_val_dataloader(data_path, da_hyp, num_workers=0):
+    label_encoder = {}
+    for i, label in enumerate(da_hyp["labels"]):
+        label_encoder[label] = i
+    
+    data_list = []
+    for img_p in os.listdir(data_path):
+        data_list.append(os.path.join(data_path, img_p))
 
+    idxs = np.arange(len(data_list))
+    valid_dataset = PetsDataset(data_list, label_encoder, idxs, 
+                                da_hyp=da_hyp, training=False)
+    valid_loader = DataLoader(valid_dataset, batch_size=da_hyp["batch_size"], shuffle=False, 
+                              num_workers=num_workers, pin_memory=True)
+    return valid_loader
+
+def create_inference_dataloader(data_path, da_hyp, batch_size, num_workers=0):
+    label_encoder = {}
+    for i, label in enumerate(da_hyp["labels"]):
+        label_encoder[label] = i
+    
+    data_list = []
+    for img_p in os.listdir(data_path):
+        data_list.append(os.path.join(data_path, img_p))
+
+    idxs = np.arange(len(data_list))
+    valid_dataset = PetsInferenceDataset(data_list, da_hyp=da_hyp)
+    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False, 
+                              num_workers=num_workers, pin_memory=True)
+    return valid_loader
 
 
 class PetsDataset(Dataset):
@@ -72,3 +101,29 @@ class PetsDataset(Dataset):
 
         img = self.preprocessor(img)
         return img, self.labels[self.idxs[index]]
+    
+
+class PetsInferenceDataset(Dataset):
+    def __init__(self, image_list, da_hyp):
+        super(PetsInferenceDataset, self).__init__()
+        self.image_list = image_list
+        def sort_key(x):
+            x = os.path.basename(x)
+            x = x.split(".")[0]
+            return int(x)
+        
+        self.image_list.sort(key=sort_key)
+
+        self.preprocessor = get_preprocessor(da_hyp)
+        
+
+    def __len__(self) -> int:
+        return len(self.image_list)
+
+    def __getitem__(self, index: Any) -> Any:
+        img_p = self.image_list[index]
+
+        img = Image.open(img_p)
+
+        img = self.preprocessor(img)
+        return img, int(os.path.basename(img_p).split(".")[0])
