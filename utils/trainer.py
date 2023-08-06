@@ -54,8 +54,7 @@ class Trainer:
                 self.best_acc = val_acc
                 torch.save(self.model.state_dict(), self.best_model_path)
             
-            if epoch != self.epochs - 1:
-                torch.save(self.model.state_dict(), self.last_model_path)
+            torch.save(self.model.state_dict(), self.last_model_path)
 
             self.process_index(train_loss, val_loss, val_acc)
 

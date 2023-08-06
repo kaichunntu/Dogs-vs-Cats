@@ -4,6 +4,7 @@ import sys
 import random
 import argparse
 import yaml
+import copy
 
 import numpy as np
 import torch
@@ -32,7 +33,7 @@ def get_args():
         type=str,
         default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 
                              "config/hyp.yaml"),
-        help="Path to the model directory",
+        help="Path to the hyp config directory",
     )
     parser.add_argument(
         "--log_dir",  
@@ -63,11 +64,11 @@ def main(args):
 
     train_dataloader, val_dataloader = create_dataloader(None, hyp["dataset"], num_workers=1)
     # test_dataloader(train_dataloader)
-
     
     model = Model(cfg, hyp["dataset"]["size"])
-    profile_model(model, hyp["dataset"]["size"][::-1], save_dir)
-    
+    _model = copy.deepcopy(model)
+    profile_model(_model, hyp["dataset"]["size"][::-1], save_dir)
+    del _model
     compute_loss = Category_Loss()
     
     trainer = Trainer(model, compute_loss, hyp, device, save_dir)

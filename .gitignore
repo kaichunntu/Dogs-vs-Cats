@@ -3,8 +3,10 @@ __pycache__/
 
 data/
 runs/
+results/
 
 *.jpg
 *.png
 *.pt
+*.csv
 exp/
