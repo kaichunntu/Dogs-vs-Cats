@@ -1,5 +1,5 @@
 
-
+import torch
 from torch import nn
 
 
@@ -45,6 +45,7 @@ class BaseConv(nn.Module):
         x = self.bn(x)
         return x
     
+
 class Stem(nn.Module):
     def __init__(self, in_c, out_c, act="prelu"):
         super(Stem, self).__init__()
@@ -61,3 +62,11 @@ class Stem(nn.Module):
         x = self.max_pool(x)
         return x
 
+
+class Concat(nn.Module):
+    def __init__(self, dim):
+        super(Concat, self).__init__()
+        self.dim = dim
+
+    def forward(self, x):
+        return torch.cat(x, dim=self.dim)
