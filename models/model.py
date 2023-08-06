@@ -2,7 +2,7 @@
 from torch import nn
 
 from .blocks import *
-from .common_layers import BaseConv, get_act_layer, Stem
+from .common_layers import BaseConv, get_act_layer, Stem, Concat
 from .heads import ClassificationHead
 
 class Model(nn.Module):

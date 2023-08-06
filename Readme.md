@@ -11,6 +11,7 @@ The usage is list as below. Follow the steps
 There are two ways to build environment. The first is using the docker. Please check that you already have
 docker installed.
 ```
+git clone 
 cd misc/DockerImage
 docker build -t training:pytorch .
 
@@ -23,11 +24,15 @@ pip install -r requirements.txt
 ```
 
 ### Download cat-vs-dog dataset
-
-
-
+Download the dataset from [Dogs vs Cats](https://www.kaggle.com/c/dogs-vs-cats). unzip it to data folder.
 
 ### Training a classifier
+First, complete the config. please follow the rule in config/readme.md.
+Second, execute the command to train a classifier.
+```
+python train.py config/model_example.yaml config/hyp.yaml
+```
+
 
 
 
