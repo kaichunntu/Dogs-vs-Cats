@@ -8,7 +8,7 @@ train:
   petrained: None
 
 eval:
-  test_aug:False
+  test_aug: False
 
 
 optimizer:
