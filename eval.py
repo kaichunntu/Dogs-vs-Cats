@@ -9,11 +9,11 @@ import torch
 
 
 from models.model import Model
-from datasets.datasets import create_dataloader
+from datasets.datasets import create_dataloader, create_test_dataloader
 from utils.loss import Category_Loss
 from utils.test_scripts import profile_model
 from utils.evaluate import evaluate
-from utils.general import load_ckpt
+from utils.torch_utils import load_ckpt
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -34,6 +34,12 @@ def get_args():
         "--weights",
         type=str,
         help="Path to the weights file",
+    )
+    parser.add_argument(
+        "--data_root",
+        type=str,
+        default=None,
+        help="Path to the data directory",
     )
     parser.add_argument(
         "--save_dir",
@@ -57,7 +63,14 @@ def main(args):
 
     device = torch.device("cuda" if torch.cuda.is_available() and hyp["gpu"] \
                           else "cpu")
-    _, val_dataloader = create_dataloader(None, hyp["dataset"], num_workers=1)
+    if args.data_root is None:
+        ## test extra dataset
+        _, val_dataloader = create_dataloader(None, hyp["dataset"], 
+                                              num_workers=1)
+    else:
+        ## reproduce results of valid dataset as training process
+        val_dataloader = create_test_dataloader(args.data_root, hyp["dataset"], 
+                                                num_workers=1)
     
     model = Model(cfg, hyp["dataset"]["size"])
     load_ckpt(model, args.weights, device)

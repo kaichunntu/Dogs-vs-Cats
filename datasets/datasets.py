@@ -43,7 +43,7 @@ def create_dataloader(data_path, da_hyp, num_workers=0):
     print("Finish creating dataloader\n")
     return train_loader, valid_loader
 
-def create_val_dataloader(data_path, da_hyp, num_workers=0):
+def create_test_dataloader(data_path, da_hyp, num_workers=0):
     label_encoder = {}
     for i, label in enumerate(da_hyp["labels"]):
         label_encoder[label] = i

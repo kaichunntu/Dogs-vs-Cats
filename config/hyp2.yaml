@@ -5,7 +5,7 @@ gpu: True
 
 train:
   epochs: 50
-  petrained: None
+  pretrained: 
 
 eval:
   test_aug: False

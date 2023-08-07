@@ -5,7 +5,7 @@ gpu: True
 
 train:
   epochs: 50
-  petrained: None
+  pretrained: 
 
 eval:
   test_aug: False
@@ -24,7 +24,7 @@ dataset:
   root: ./data/train
   ratio: 0.9
   labels: ["cat", "dog"]
-  batch_size: 16
+  batch_size: 24
   size: [224, 224] # size (w, h)
   fliplr: 0.5
   flipud: 0
