@@ -57,4 +57,10 @@ def evaluate(model, compute_loss, test_loader, device, save_dir=None):
         format(loss, acc, auc, precision, recall)
 
     print(print_s.format(batch_idx, total_steps) + metric_s)
-    return loss, acc 
+    return {
+        "loss": loss,
+        "acc": acc,
+        "precision": precision,
+        "recall": recall,
+        "auc": auc
+    }

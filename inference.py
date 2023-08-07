@@ -75,8 +75,8 @@ def main(args):
     model = Model(cfg, hyp["dataset"]["size"])
     load_ckpt(model, args.weights, device)
     # profile_model(model, hyp["dataset"]["size"][::-1], save_dir)
-    with torch.no_grad():
-        pred_cls, img_id = infer(model, data_loader, device)
+    
+    pred_cls, img_id = infer(model, data_loader, device)
     to_csv(pred_cls, img_id, save_dir)
 
 
