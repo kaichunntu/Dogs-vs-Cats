@@ -106,7 +106,7 @@ class PetsDataset(Dataset):
         label_weight = np.zeros(self.nc)
         for i, label in enumerate(self.labels):
             label_weight[label] += 1
-        label_weight = label_weight / max(label_weight)
+        label_weight = 1/ (label_weight / max(label_weight))
         return label_weight
     
 
