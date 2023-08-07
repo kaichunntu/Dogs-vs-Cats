@@ -8,7 +8,7 @@ import yaml
 import torch
 
 from datasets.datasets import create_inference_dataloader
-from models.model import Model
+from models.model import Model, TTAWrapper
 from utils.test_scripts import profile_model
 from utils.general import to_csv
 from utils.torch_utils import infer, load_ckpt
@@ -51,12 +51,18 @@ def get_args():
         help="Confidence threshold for classification",
     )
     parser.add_argument(
+        "--use_tta",
+        action="store_true",
+        help="Use test time augmentation"
+    )
+    parser.add_argument(
         "--save_dir",
         type=str,
         default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 
                              "results"),
         help="Path to the save directory",
     )
+
     return parser.parse_args()
 
 def main(args):
@@ -75,7 +81,9 @@ def main(args):
     model = Model(cfg, hyp["dataset"]["size"])
     load_ckpt(model, args.weights, device)
     # profile_model(model, hyp["dataset"]["size"][::-1], save_dir)
-    
+    ## use tta
+    if args.use_tta:
+        model = TTAWrapper(model)
     pred_cls, img_id = infer(model, data_loader, device)
     to_csv(pred_cls, img_id, save_dir)
 

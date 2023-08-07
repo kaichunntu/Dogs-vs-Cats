@@ -56,7 +56,7 @@ def evaluate(model, compute_loss, test_loader, device, save_dir=None):
     metric_s = "Loss: {:.4f}\tAcc: {:4.2f}\tAUC:{:.3f}\tPrecision:{:4.2f}\tRecall:{:4.2f}".\
         format(loss, acc, auc, precision, recall)
 
-    print(print_s.format(batch_idx, total_steps) + metric_s)
+    print(print_s.format(batch_idx+1, total_steps) + metric_s)
     return {
         "loss": loss,
         "acc": acc,

@@ -8,7 +8,7 @@ import numpy as np
 import torch
 
 
-from models.model import Model
+from models.model import Model, TTAWrapper
 from datasets.datasets import create_dataloader, create_test_dataloader
 from utils.loss import Category_Loss
 from utils.test_scripts import profile_model
@@ -40,6 +40,11 @@ def get_args():
         type=str,
         default=None,
         help="Path to the data directory",
+    )
+    parser.add_argument(
+        "--use_tta",
+        action="store_true",
+        help="Use test time augmentation"
     )
     parser.add_argument(
         "--save_dir",
@@ -75,10 +80,19 @@ def main(args):
     model = Model(cfg, hyp["dataset"]["size"])
     load_ckpt(model, args.weights, device)
     # profile_model(model, hyp["dataset"]["size"][::-1], save_dir)
+    
+    ## Set loss
+    label_weight = [1.0 for _ in range(val_dataloader.dataset.nc)]
+    compute_loss = Category_Loss(label_weight=label_weight)
+    compute_loss.to(device)
 
-    compute_loss = Category_Loss()
+    ## use tta
+    if args.use_tta:
+        model = TTAWrapper(model)
+
+    model.eval()
     model = model.to(device)
-    loss, acc = evaluate(model, compute_loss, val_dataloader, device, 
+    val_metrics = evaluate(model, compute_loss, val_dataloader, device, 
                          save_dir)
 
     

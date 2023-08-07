@@ -51,6 +51,7 @@ def main(args):
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
     save_dir = increment_dir(args.log_dir)
+    print("Log dir: {}".format(save_dir))
     os.makedirs(save_dir, exist_ok=False)
     os.makedirs(os.path.join(save_dir, "weights"), exist_ok=False)
     dump_config([args.model_config, args.hyp], save_dir)
@@ -69,7 +70,8 @@ def main(args):
     _model = copy.deepcopy(model)
     profile_model(_model, hyp["dataset"]["size"][::-1], save_dir)
     del _model
-    compute_loss = Category_Loss()
+    compute_loss = Category_Loss(label_weight=train_dataloader.dataset.get_label_weight())
+    compute_loss.to(device)
     
     trainer = Trainer(model, compute_loss, hyp, device, save_dir)
     try:

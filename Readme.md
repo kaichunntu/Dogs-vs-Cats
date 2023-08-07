@@ -50,7 +50,10 @@ Or, if you want to play kaggle game, you can use the following to save predictio
 python inference.py ./data/test1 runs/exp0/model_example.yaml ./runs/exp0/hyp.yaml --weights runs/exp0/weights/best_model.pt --batch_size 32 --save_dir results
 ```
 
-
+In addition, test time augment is an model free ensemble method. you can use '--use_tta' flag to activate this policy
+```
+python eval.py runs/exp0/model_example.yaml runs/exp0/hyp.yaml --weights runs/exp0/weights/best_model.pt --data_root other/dataset/path --save_dir results --use_tta
+```
 
 
 

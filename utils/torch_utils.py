@@ -31,8 +31,7 @@ def infer(model, loader, device):
 
 def load_ckpt(model, weights_path, device, optimizer=None):
     ckpt = torch.load(weights_path, map_location=device)
-    # model.load_state_dict(ckpt["model"], strict=True)
-    model.load_state_dict(ckpt, strict=False)
+    model.load_state_dict(ckpt["model"], strict=True)
     if optimizer is not None:
         optimizer.load_state_dict(ckpt["optimizer"])
 

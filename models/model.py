@@ -1,4 +1,5 @@
 
+import torch
 from torch import nn
 
 from .blocks import *
@@ -31,6 +32,31 @@ class Model(nn.Module):
                 record_tensor.append(None)
 
         return x
+    
+class TTAWrapper(nn.Module):
+    def __init__(self, model):
+        super(TTAWrapper, self).__init__()
+        self.model = model
+
+    def generate_tta_sample(self, x):
+        funcs = [
+            lambda x: x,
+            lambda x: torch.fliplr(x)
+        ]
+        for f in funcs:
+            yield f(x)
+
+    def forward(self, x):
+        output_logits, output_prob = [],[]
+        for _x in self.generate_tta_sample(x):
+            logits, prob = self.model(_x)
+            output_logits.append(logits)
+            output_prob.append(prob)
+        output_logits = torch.stack(output_logits, dim=0).mean(dim=0)
+        output_prob = torch.stack(output_prob, dim=0).mean(dim=0)
+        return output_logits, output_prob
+
+    
 
 
 

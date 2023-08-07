@@ -80,13 +80,13 @@ class PetsDataset(Dataset):
         super(PetsDataset, self).__init__()
         self.image_list = image_list
         self.labels = [label_encoder[os.path.basename(_).split(".")[0]] for _ in self.image_list]
+        self.nc = len(set(self.labels))
         self.idxs = idxs
         self.training = training
 
         self.preprocessor = get_preprocessor(da_hyp)
         if self.training:
-            self.transform = get_transformer(da_hyp)
-        
+            self.transform = get_transformer(da_hyp)        
 
     def __len__(self) -> int:
         return len(self.idxs)
@@ -101,6 +101,13 @@ class PetsDataset(Dataset):
 
         img = self.preprocessor(img)
         return img, self.labels[self.idxs[index]]
+    
+    def get_label_weight(self):
+        label_weight = np.zeros(self.nc)
+        for i, label in enumerate(self.labels):
+            label_weight[label] += 1
+        label_weight = label_weight / max(label_weight)
+        return label_weight
     
 
 class PetsInferenceDataset(Dataset):
