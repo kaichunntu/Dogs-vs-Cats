@@ -6,6 +6,7 @@ The usage is list as below. Follow the steps
 1. Setup enviroment
 2. Download the dataset
 3. Training a classifier
+4. Evaluate the classifier
 
 ### Setup environment
 There are two ways to build environment. The first is using the docker. Please check that you already have
@@ -22,16 +23,33 @@ The second is using the pip to install related packages, suggest that you have p
 ```
 pip install -r requirements.txt
 ```
+Note: Strongly recommended using docker.
 
 ### Download cat-vs-dog dataset
 Download the dataset from [Dogs vs Cats](https://www.kaggle.com/c/dogs-vs-cats). unzip it to data folder.
 
 ### Training a classifier
 First, complete the config. please follow the rule in config/readme.md.
-Second, execute the command to train a classifier.
+Second, execute the command to train a classifier and save weights and config to the log directory.
 ```
-python train.py config/model_example.yaml config/hyp.yaml
+python train.py config/model_example.yaml config/hyp.yaml --log_dir [log path]
 ```
+
+### Evaluate the classifier
+you can evaluate the classifier by running the following:
+for reproducing the training accuracy
+```
+python eval.py runs/exp0/model_example.yaml runs/exp0/hyp.yaml --weights runs/exp0/weights/best_model.pt --save_dir results
+```
+for evaluating other dataset with ground truth
+```
+python eval.py runs/exp0/model_example.yaml runs/exp0/hyp.yaml --weights runs/exp0/weights/best_model.pt --data_root other/dataset/path --save_dir results
+```
+Or, if you want to play kaggle game, you can use the following to save predictions to a csv file
+```
+python inference.py ./data/test1 runs/exp0/model_example.yaml ./runs/exp0/hyp.yaml --weights runs/exp0/weights/best_model.pt --batch_size 32 --save_dir results
+```
+
 
 
 
