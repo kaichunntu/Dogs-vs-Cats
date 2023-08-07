@@ -8,8 +8,6 @@ import glob
 from sklearn import metrics
 from matplotlib import pyplot as plt
 
-import torch
-
 
 def increment_dir(dir, comment=''):
     # Increments a directory runs/exp1 --> runs/exp2_comment
@@ -50,39 +48,12 @@ def calculate_roc_curve(gt, pred_prob, save_path):
     plt.close(fig)
     return fpr, tpr, thresholds, auc
 
-def infer(model, loader, device):
-    model = model.to(device)
-    model.eval()
-
-    mode = "     [infer] "
-    print_s = mode + "step: {0:>5d}/{1:<4d}\t"
-
-    all_pred_cls = []
-    all_img_id = []
-    l = len(loader)
-
-    for batch_idx, (data, img_id) in enumerate(loader):
-        all_img_id.extend(img_id)
-        print(print_s.format(batch_idx+1, l), end="\r")
-        data = data.to(device)
-        output, pred_prob = model(data)
-
-        pred_cls = torch.argmax(output, dim=1).to(torch.long)
-        all_pred_cls.append(pred_cls)
-    print(print_s.format(batch_idx+1, l))
-
-    all_pred_cls = torch.cat(all_pred_cls, dim=0).cpu().detach().numpy()
-    return all_pred_cls, all_img_id
-
-def load_ckpt(model, weights_path, device):
-    ckpt = torch.load(weights_path, map_location=device)
-    model.load_state_dict(ckpt, strict=False)
-
 def to_csv(np_data, np_id, save_to):
     save_to = os.path.join(save_to, "submission.csv")
     with open(save_to, 'w') as f:
         f.write("id,label\n")
         s = []
         for i, cls in enumerate(np_data):
-            s.append("{0:d},{1:d}".format(np_id[i], cls))
+            # s.append("{0:d},{1:d}".format(np_id[i], cls))
+            s.append("{0:d},{1:f}".format(np_id[i], cls))
         f.write("\n".join(s))

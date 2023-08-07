@@ -72,10 +72,12 @@ def main(args):
     compute_loss = Category_Loss()
     
     trainer = Trainer(model, compute_loss, hyp, device, save_dir)
-
-    trainer.fit(train_dataloader, val_dataloader)
-
-
+    try:
+        trainer.fit(train_dataloader, val_dataloader)
+    except KeyboardInterrupt:
+        trainer.save_metrics()
+        print("Saving metrics...")
+    print("save logs at {}".format(save_dir))
 
 
 

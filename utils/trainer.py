@@ -7,6 +7,7 @@ import torch
 import numpy as np
 from .evaluate import evaluate
 from .general import plot_line_chart
+from .torch_utils import load_ckpt
 
 
 class Trainer:
@@ -23,6 +24,12 @@ class Trainer:
         self.optimizer = configure_optimizer(model, opt_hyp["optimizer"])
         self.scheduler = configure_schedular(self.optimizer, 
                                              opt_hyp["optimizer"], epochs=self.epochs)
+        if opt_hyp["train"]["pretrained"] is not None:
+            print("Loading pretrained model from {}".format(opt_hyp["train"]["pretrained"]))
+            load_ckpt(self.model, opt_hyp["train"]["pretrained"], device, 
+                      optimizer=self.optimizer)
+        else:
+            print("Random initialization of model weights")
 
         self.best_loss = np.inf
         self.best_acc = 0.0
@@ -47,18 +54,25 @@ class Trainer:
 
             val_loss, val_acc = self.evaluate(val_loader)
             
-            
+            ckpt = {
+                "epoch": epoch,
+                "model": self.model.state_dict(),
+                "optimizer": self.optimizer.state_dict(),
+                "acc": val_acc
+            }
             ## save best model by val_acc
             if val_acc > self.best_acc:
                 self.best_loss = val_loss
                 self.best_acc = val_acc
-                torch.save(self.model.state_dict(), self.best_model_path)
+                torch.save(ckpt, self.best_model_path)
             
-            torch.save(self.model.state_dict(), self.last_model_path)
+            torch.save(ckpt, self.last_model_path)
 
             self.process_index(train_loss, val_loss, val_acc)
 
             self.scheduler.step()
+        print("\n############# end training #############")
+        self.save_metrics()
         
     def train_step(self, train_loader):
         
@@ -89,6 +103,7 @@ class Trainer:
             ## record loss
             total_loss += (loss*data.size(0)).cpu().detach().numpy()
             c += data.size(0)
+
             lr_s = "\tlr: {0:.5f}".format(group_lr)
             print(print_s.format(batch_idx , total_steps, 
                                  loss.cpu().detach().numpy())+lr_s, end="\r")
@@ -99,7 +114,8 @@ class Trainer:
         return total_loss/c
                 
     def evaluate(self, val_loader):
-        loss, acc = evaluate(self.model, self.loss, val_loader, self.device, self.save_dir)
+        with torch.no_grad():
+            loss, acc = evaluate(self.model, self.loss, val_loader, self.device, self.save_dir)
         return loss, acc
     
     def warmup_model(self):
@@ -131,6 +147,15 @@ class Trainer:
                         save_path=os.path.join(self.save_dir, 'accuracy.png'),
                         xlim=[0, self.epochs])
         
+    def save_metrics(self):
+        with open(os.path.join(self.save_dir, "results.txt"), "w") as f:
+            f.write("epoch\ttrain_loss\tval_loss\tval_acc\n")
+            s = []
+            _s = "{0:d}\t{1:.4f}\t{2:.4f}\t{3:.4}"
+            for i in range(1, len(self.train_loss)+1):
+                s.append(_s.format(i, self.train_loss[i-1], 
+                                   self.val_loss[i-1], self.val_acc[i-1]))
+            f.write("\n".join(s))
 
 
         

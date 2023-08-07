@@ -10,7 +10,8 @@ import torch
 from datasets.datasets import create_inference_dataloader
 from models.model import Model
 from utils.test_scripts import profile_model
-from utils.general import infer, load_ckpt, to_csv
+from utils.general import to_csv
+from utils.torch_utils import infer, load_ckpt
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -74,8 +75,8 @@ def main(args):
     model = Model(cfg, hyp["dataset"]["size"])
     load_ckpt(model, args.weights, device)
     # profile_model(model, hyp["dataset"]["size"][::-1], save_dir)
-
-    pred_cls, img_id = infer(model, data_loader, device)
+    with torch.no_grad():
+        pred_cls, img_id = infer(model, data_loader, device)
     to_csv(pred_cls, img_id, save_dir)
 
 
