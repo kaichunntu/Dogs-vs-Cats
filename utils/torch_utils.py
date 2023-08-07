@@ -17,7 +17,9 @@ def infer(model, loader, device):
         all_img_id.extend(img_id)
         print(print_s.format(batch_idx+1, l), end="\r")
         data = data.to(device)
-        output, pred_prob = model(data)
+        
+        with torch.no_grad():
+            output, pred_prob = model(data)
 
         pred_cls = torch.argmax(output, dim=1).to(torch.long)
         # all_pred_cls.append(pred_cls.cpu().detach())

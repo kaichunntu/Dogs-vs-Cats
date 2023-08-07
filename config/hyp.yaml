@@ -21,8 +21,8 @@ optimizer:
 
 
 dataset:
-  root: ./data/train
-  ratio: 0.9
+  root: ./data/splitTrain/train
+  ratio: 0.85
   labels: ["cat", "dog"]
   batch_size: 24
   size: [224, 224] # size (w, h)
