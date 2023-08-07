@@ -37,6 +37,13 @@ def plot_line_chart(data, title, labels, save_path, xlim=[0,300], ylim=None):
     plt.savefig(save_path)
     plt.close(fig)
 
+def plot_label_hist(labels, label_names, save_path):
+    fig = plt.figure(figsize=(8,6))
+    plt.hist(labels, bins=len(label_names))
+    plt.xticks(range(len(label_names)), label_names)
+    plt.savefig(save_path)
+    plt.close(fig)
+
 def calculate_roc_curve(gt, pred_prob, save_path):
     fpr, tpr, thresholds = metrics.roc_curve(gt, pred_prob)
     auc = metrics.auc(fpr, tpr)

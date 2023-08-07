@@ -13,7 +13,7 @@ from models.model import Model
 from datasets.datasets import create_dataloader
 from utils.loss import Category_Loss
 from utils.trainer import Trainer
-from utils.general import increment_dir, dump_config
+from utils.general import increment_dir, dump_config, plot_label_hist
 from utils.test_scripts import profile_model
 
 
@@ -65,6 +65,9 @@ def main(args):
 
     train_dataloader, val_dataloader = create_dataloader(None, hyp["dataset"], num_workers=1)
     # test_dataloader(train_dataloader)
+    labels = [train_dataloader.dataset.labels[i] for i in train_dataloader.dataset.idxs]
+    plot_label_hist(labels, hyp["dataset"]["labels"],
+                    os.path.join(save_dir, "train_label_hist.png"))
     
     model = Model(cfg, hyp["dataset"]["size"])
     _model = copy.deepcopy(model)
@@ -72,7 +75,7 @@ def main(args):
     del _model
     compute_loss = Category_Loss(label_weight=train_dataloader.dataset.get_label_weight())
     compute_loss.to(device)
-    
+
     trainer = Trainer(model, compute_loss, hyp, device, save_dir)
     try:
         trainer.fit(train_dataloader, val_dataloader)

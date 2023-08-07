@@ -53,7 +53,7 @@ def evaluate(model, compute_loss, test_loader, device, save_dir=None):
     acc, precision, recall = calculate_metrics(all_gt, all_pred_cls)
     fpr, tpr, thr, auc = calculate_roc_curve(all_gt, all_pred_prob, 
                                         os.path.join(save_dir, "roc_curve.png"))
-    metric_s = "Loss: {:.4f}\tAcc: {:4.2f}\tAUC:{:.3f}\tPrecision:{:4.2f}\tRecall:{:4.2f}".\
+    metric_s = "Loss: {:.4f}\tAcc: {:.4f}\tAUC:{:.3f}\tPrecision:{:.3f}\tRecall:{:.3f}".\
         format(loss, acc, auc, precision, recall)
 
     print(print_s.format(batch_idx+1, total_steps) + metric_s)
