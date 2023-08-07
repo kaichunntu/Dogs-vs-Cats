@@ -121,13 +121,15 @@ class Trainer:
             lr_s = "\tlr: {0:.5f}".format(group_lr)
             print(print_s.format(batch_idx , total_steps, 
                                  loss.cpu().detach().numpy())+lr_s, end="\r")
-            if batch_idx>50:
-                break
+            # if batch_idx>50:
+            #     break
+        
+        ## calculate metrics
         mean_loss = total_loss/c    
         corrects = np.concatenate(corrects, axis=0)
         acc = corrects.mean()
         
-        print(print_s.format(batch_idx, len(train_loader), mean_loss)+"\tAcc: {0:.4f}".format(acc))
+        print(print_s.format(batch_idx+1, len(train_loader), mean_loss)+"\tAcc: {0:.4f}".format(acc))
         return {"loss": mean_loss, "acc": acc}
                 
     def evaluate(self, val_loader):
@@ -189,9 +191,9 @@ class Trainer:
             f.write("\t".join(keys)+"\n")
             s = []
             _s = "{0:d}"
-            for i in range(1, len(keys)+1):
+            for i in range(2, len(keys)):
                 _s += "\t{"+"{0:d}".format(i)+":.4f}"
-            for i in range(1, len(self.train_train_records["loss"])+1):
+            for i in range(1, len(self.train_records["loss"])+1):
                 val_data = [self.val_records[key][i-1] for key in keys[2:]]
                 s.append(_s.format(i, self.train_records["loss"][i-1], *val_data))
             f.write("\n".join(s))
