@@ -6,9 +6,12 @@ Some optimized techiques are implemented in this repository, such as Test Time A
 Here is an example of a task which is training a classifier to identify a cat or a dog. 
 The experiment results are
 
-training index
-![Alt text](result_images/loss.png) ![Alt text](result_images/acc.png)
+Training metrics
 
+<img src=./result_images/loss.png width=250 height=200> <img src=./result_images/acc.png width=250 height=200>
+
+
+Experiment results
 |mdoel|TTA|train acc|val acc|val precision|val_recall|AUC|
 | -------- | ------- | ------- | ------- | ------- | ------- | ------- |
 |ResNeXt|False|0.984|0.9690|0.9638|0.9747|0.9959|
