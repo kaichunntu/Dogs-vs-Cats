@@ -80,13 +80,12 @@ def main(args):
     try:
         trainer.fit(train_dataloader, val_dataloader)
     except KeyboardInterrupt:
-        trainer.save_metrics()
         print("Saving metrics...")
     except Exception as e:
         trainer.save_metrics()
         print("save logs at {}".format(save_dir))
         raise e
-
+    trainer.save_metrics()
     print("save logs at {}".format(save_dir))
 
 

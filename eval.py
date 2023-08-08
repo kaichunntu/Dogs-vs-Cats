@@ -3,6 +3,7 @@ import os
 import argparse
 import yaml
 import random
+import json
 
 import numpy as np
 import torch
@@ -61,6 +62,7 @@ def main(args):
     with open(args.model_config, "r") as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     save_dir = args.save_dir
+    os.makedirs(save_dir, exist_ok=True)
 
     random.seed(hyp['np_seed'])
     np.random.seed(hyp['np_seed'])
@@ -72,10 +74,12 @@ def main(args):
         ## test extra dataset
         _, val_dataloader = create_dataloader(None, hyp["dataset"], 
                                               num_workers=1)
+        data_path = hyp["dataset"]
     else:
         ## reproduce results of valid dataset as training process
         val_dataloader = create_test_dataloader(args.data_root, hyp["dataset"], 
                                                 num_workers=1)
+        data_path = args.data_root
     
     model = Model(cfg, hyp["dataset"]["size"])
     load_ckpt(model, args.weights, device)
@@ -94,6 +98,10 @@ def main(args):
     model = model.to(device)
     val_metrics = evaluate(model, compute_loss, val_dataloader, device, 
                          save_dir)
+    
+    # dump results
+    with open(os.path.join(save_dir, "eval_metrics.json"), "w") as f:
+        json.dump({data_path:val_metrics}, f, indent=4)
 
     
 
