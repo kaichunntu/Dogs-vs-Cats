@@ -1,7 +1,20 @@
 ## Cat vs Dog
 
 This repository aims to provide a training framework for classification tasks.
-The example is a task of training a classifier to identify a cat or a dog.
+Some optimized techiques are implemented in this repository, such as Test Time Augmentation.
+
+Here is an example of a task which is training a classifier to identify a cat or a dog. 
+The experiment results are
+
+training index
+![Alt text](result_images/loss.png) ![Alt text](result_images/acc.png)
+
+|mdoel|TTA|train acc|val acc|val precision|val_recall|AUC|
+| -------- | ------- | ------- | ------- | ------- | ------- | ------- |
+|ResNeXt|False|0.984|0.9690|0.9638|0.9747|0.9959|
+|ResNeXt|True |0.984|0.9700|0.9644|0.9760|0.9962|
+
+
 The usage is list as below. Follow the steps
 1. Setup enviroment
 2. Download the dataset
