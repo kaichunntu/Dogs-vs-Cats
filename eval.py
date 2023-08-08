@@ -74,7 +74,7 @@ def main(args):
         ## test extra dataset
         _, val_dataloader = create_dataloader(None, hyp["dataset"], 
                                               num_workers=1)
-        data_path = hyp["dataset"]
+        data_path = hyp["dataset"]["root"]
     else:
         ## reproduce results of valid dataset as training process
         val_dataloader = create_test_dataloader(args.data_root, hyp["dataset"], 
