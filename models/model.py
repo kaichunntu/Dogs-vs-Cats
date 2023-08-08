@@ -35,6 +35,9 @@ class Model(nn.Module):
     
 class TTAWrapper(nn.Module):
     def __init__(self, model):
+        """
+        Refer to Better Aggregation in Test-Time Augmentation
+        """
         super(TTAWrapper, self).__init__()
         self.model = model
 
@@ -75,7 +78,8 @@ def parse_model_cfg(cfg, verbose=False):
                 _f = [f]
             else:
                 _f = f
-            for _pos in f:
+            # print(idx, func, f)
+            for _pos in _f:
                 if _pos == -1: continue
                 # set True for the tensor which need to pass to deep layer
                 routes[_pos] = True
